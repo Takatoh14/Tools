@@ -1,4 +1,4 @@
-#  Tool
+#  Tools
 
 React + TypeScript で作成したテキスト操作ツールです。  
 テキストの置換、JSON整形、CSV変換などを簡単に行えます。  
