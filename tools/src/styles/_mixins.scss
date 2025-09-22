@@ -1,0 +1,15 @@
+@use "./variables" as *;
+
+//デフォルト設定
+@mixin defaultSetting {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+//レスポンシブ幅設定
+@mixin tab {
+  @media (max-width: $tabWidth) {
+    @content;
+  }
+}

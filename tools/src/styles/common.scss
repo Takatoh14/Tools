@@ -1,0 +1,32 @@
+@use "./style.scss";
+@use "./variables" as *;
+@use "./mixins" as *;
+
+.__title {
+  margin-block: 3rem;
+  text-align: center;
+  font-size: 3rem;
+}
+
+.link-style {
+  margin-top: 3rem;
+  border: $mainBorder;
+  border-radius: 2rem;
+  display: block;
+  text-decoration: none;
+  color: inherit;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 2rem;
+  width: 35rem;
+  height: 20rem;
+  transition: 0.3s all;
+  &:hover {
+    transform: translateY(-0.5rem);
+  }
+
+  @include tab {
+    margin-top: 0;
+  }
+}

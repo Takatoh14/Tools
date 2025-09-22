@@ -1,0 +1,22 @@
+@use "./style.scss";
+@use "./variables" as *;
+@use "./mixins" as *;
+
+.top {
+  max-width: 75rem;
+  width: 100%;
+  margin: 0 auto;
+
+  .card {
+    display: flex;
+    justify-content: center;
+    gap: 5rem;
+    flex-wrap: wrap;
+    width: 100%;
+    margin-top: 5rem;
+
+    @include tab {
+      gap: 3rem;
+    }
+  }
+}
