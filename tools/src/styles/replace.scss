@@ -1,0 +1,22 @@
+@use "./style.scss";
+@use "./variables" as *;
+@use "./mixins" as *;
+
+.textField {
+  margin-top: 8rem;
+}
+
+.replaceTextOptions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 4rem;
+  max-width: 70rem;
+  margin: 0 auto;
+
+  @include tab {
+    grid-template-columns: 1fr;
+    gap: 2.4rem;
+    padding-inline: 1.6rem;
+    width: 100%;
+  }
+}

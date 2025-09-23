@@ -2,11 +2,13 @@
 
 $mainColor: #00ffcc;
 $subColor: #222222;
+$sub2Color: #30363d;
+$sub3Color: #9aa4b2;
 $mainBgColor: #222222;
 $subBgColor: #ffffff;
 
 //========== 線 ==========
-$mainBorder: solid 0.2rem $mainColor;
+$mainBorder: 1px solid $sub2Color;
 
 //========== 画面幅 ==========
 $pcWidth: 192rem;

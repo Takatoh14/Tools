@@ -1,0 +1,62 @@
+/* src/components/Alert.scss */
+@use "../styles/variables" as *;
+
+.alert {
+  position: fixed;
+  left: 50%;
+  transform: translateX(-50%);
+  top: -80px; /* 画面外からスタート */
+  opacity: 0; /* 非表示状態 */
+  pointer-events: none; /* 非表示中はクリック無効 */
+  min-width: 40rem;
+  max-width: 90vw;
+  padding: 1.2rem 1.6rem;
+  border-radius: 8px;
+  color: #fff;
+  z-index: 9999;
+
+  /* 開く時は素早く、閉じる時はゆっくり */
+  transition: top 0.5s ease-out, /* スライド */ opacity 600ms ease; /* フェード（ゆっくり） */
+
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.25);
+  font-size: 1.5rem;
+  will-change: top, opacity; /* パフォーマンスヒント */
+
+  &--open {
+    top: 16px; /* 画面内へ */
+    opacity: 1; /* 表示 */
+    pointer-events: auto; /* クリック可 */
+  }
+
+  &__close {
+    margin-left: auto;
+    background: transparent;
+    border: none;
+    font-size: 2rem;
+    color: inherit;
+    cursor: pointer;
+  }
+
+  &--error {
+    background: #e5484d;
+  }
+  &--success {
+    background: #2cb67d;
+  }
+  &--info {
+    background: #3b82f6;
+  }
+  &--warning {
+    background: #f59e0b;
+  }
+}
+
+/* アニメーション控えめ設定（OS設定が「簡易動作」の場合） */
+@media (prefers-reduced-motion: reduce) {
+  .alert {
+    transition: none;
+  }
+}
