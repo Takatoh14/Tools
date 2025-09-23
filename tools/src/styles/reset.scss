@@ -17,4 +17,11 @@ body {
   -moz-osx-font-smoothing: grayscale;
   background-color: $subBgColor;
   color: $subColor;
+
+  input,
+  textarea,
+  select,
+  button {
+    font: inherit; /* body の font-family, font-size, line-height を全部引き継ぐ */
+  }
 }

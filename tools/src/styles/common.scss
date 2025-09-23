@@ -2,7 +2,7 @@
 @use "./variables" as *;
 @use "./mixins" as *;
 
-.__title {
+.title {
   margin-block: 3rem;
   text-align: center;
   font-size: 3rem;
@@ -28,5 +28,79 @@
 
   @include tab {
     margin-top: 0;
+  }
+}
+
+.subTitle {
+  margin-block: 3rem;
+  text-align: center;
+  font-size: 2rem;
+}
+
+.textBox {
+  letter-spacing: 0.1em;
+  max-width: 70rem;
+  display: block;
+  margin: 0 auto;
+  width: 100%;
+  background-color: transparent;
+  border: $mainBorder;
+  border-radius: 2rem;
+  padding: 2rem 1rem;
+  color: $mainColor;
+  font-size: 1.5rem;
+}
+
+.replaceTextOption {
+  display: flex;
+  flex-direction: column;
+  gap: 1.2rem;
+  text-align: left;
+
+  .replaceTextOptionTitle {
+    color: $mainColor;
+    font-size: 1.8rem;
+    font-weight: 700;
+    text-align: center;
+    letter-spacing: 0.06em;
+  }
+
+  .replaceOption {
+    display: flex;
+    flex-direction: column;
+    gap: 0.8rem;
+
+    .label {
+      color: $sub3Color;
+      font-size: 1.4rem;
+      text-align: center;
+    }
+
+    .inputText {
+      width: 100%;
+      height: 40px;
+      padding: 0 1.2rem;
+      border-radius: 8px;
+      background: transparent;
+      border: $mainBorder;
+      color: $mainColor;
+      outline: none;
+      font-size: 1.5rem;
+    }
+
+    .checkbox {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.6rem;
+      font-size: 1.3rem;
+      color: $mainColor;
+
+      input[type="checkbox"] {
+        width: 16px;
+        height: 16px;
+        accent-color: $mainColor;
+        transform: translateY(1px);
+      }
+    }
   }
 }
