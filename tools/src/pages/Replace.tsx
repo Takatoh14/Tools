@@ -65,6 +65,31 @@ const Replace = () => {
     // 依存配列：入力・オプションの全て
   }, [inputText, searchPattern, replaceValue, regexMode, caseSensitive, raise]);
 
+  // コピー処理（成功/失敗をアラートで通知）
+  const handleCopy = async () => {
+    try {
+      if (!outputText) {
+        // 空のときは何もしない（任意でinfo表示）
+        return;
+      }
+      // クリップボードAPI（https対応ブラウザ）
+      await navigator.clipboard.writeText(outputText);
+      raise("出力内容をコピーしました。", "success");
+    } catch {
+      // フォールバック（古いブラウザ等）
+      const area = document.getElementById(
+        "outputText"
+      ) as HTMLTextAreaElement | null;
+      if (area) {
+        area.select();
+        document.execCommand("copy");
+        raise("出力内容をコピーしました。", "success");
+      } else {
+        raise("コピーに失敗しました。ブラウザの設定をご確認ください。");
+      }
+    }
+  };
+
   return (
     <div className="replace">
       <Alert
@@ -120,7 +145,19 @@ const Replace = () => {
 
       {/* 出力欄（TextBox 使用・編集不可） */}
       <div className="textField">
-        <SubTitle title="subTitle" titleName="出力欄" />
+        <div className="outputHeader">
+          <SubTitle title="subTitle" titleName="出力欄" />
+          <button
+            className="copyBtn"
+            onClick={handleCopy}
+            disabled={!outputText} // 出力が空なら無効
+            title="出力内容をコピー"
+            aria-label="出力内容をコピー"
+          >
+            コピー
+          </button>
+        </div>
+
         <TextBox
           name="outputText"
           rows={7}
