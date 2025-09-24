@@ -1,0 +1,16 @@
+@use "./style.scss";
+@use "./variables" as *;
+@use "./mixins" as *;
+
+.backBtn {
+  display: block;
+  max-width: 7rem;
+  width: 50%;
+  padding: 0.6rem 1.2rem;
+  margin: 4rem auto;
+  border-radius: 3rem;
+  background-color: transparent;
+  border: $mainBorder;
+  color: $subBgColor;
+  font-size: 1.4rem;
+}
