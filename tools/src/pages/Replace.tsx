@@ -1,17 +1,16 @@
 // pages/Replace.tsx
 import { useEffect, useState, useCallback } from "react";
 import { Title, SubTitle, TextBox, ReplaceOption } from "../components/Common";
-import { Alert } from "../components/Alert"; // 上から出るポップアップ（既存or前回提示のもの）
+import { Alert } from "../components/Alert";
+import { CopyButton } from "../components/CopyButton"; // ★ 追加
+import { BackButton } from "../components/BackButton";
 import "../styles/replace.scss";
 
-// 文字列検索用にメタ文字をエスケープ
 const escapeRegExp = (s: string) => s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
-// 正規表現モード時の置換文字列の \n や \t を解釈
 const decodeEscapes = (s: string) =>
   s.replace(/\\n/g, "\n").replace(/\\t/g, "\t").replace(/\\r/g, "\r");
 
 const Replace = () => {
-  // 入出力・オプション
   const [inputText, setInputText] = useState("");
   const [searchPattern, setSearchPattern] = useState("");
   const [replaceValue, setReplaceValue] = useState("");
@@ -19,7 +18,6 @@ const Replace = () => {
   const [caseSensitive, setCaseSensitive] = useState(false);
   const [outputText, setOutputText] = useState("");
 
-  // ポップアップ
   const [alertOpen, setAlertOpen] = useState(false);
   const [alertMsg, setAlertMsg] = useState("");
   const [alertType, setAlertType] = useState<
@@ -32,63 +30,30 @@ const Replace = () => {
     setAlertOpen(true);
   }, []);
 
-  // 入力が変わるたびに自動置換（ボタン無し）
   useEffect(() => {
-    // 入力や検索パターンが空なら出力をリセット
     if (!inputText || !searchPattern) {
       setOutputText("");
       return;
     }
-
     try {
       const source = regexMode ? searchPattern : escapeRegExp(searchPattern);
       const flags = `g${caseSensitive ? "" : "i"}`;
       const reg = new RegExp(source, flags);
 
       if (!reg.test(inputText)) {
-        // マッチが無ければ出力を空に（必要に応じメッセージは控えめに）
         setOutputText("");
         return;
       }
-
       const replacement = regexMode
         ? decodeEscapes(replaceValue)
         : replaceValue;
-      const result = inputText.replace(reg, replacement);
-      setOutputText(result);
+      setOutputText(inputText.replace(reg, replacement));
     } catch {
-      // 構文エラー時だけ通知（多発しないよう 700ms デバウンス等も可）
       setOutputText("");
       if (searchPattern)
         raise("正規表現が不正です。パターンを確認してください。");
     }
-    // 依存配列：入力・オプションの全て
   }, [inputText, searchPattern, replaceValue, regexMode, caseSensitive, raise]);
-
-  // コピー処理（成功/失敗をアラートで通知）
-  const handleCopy = async () => {
-    try {
-      if (!outputText) {
-        // 空のときは何もしない（任意でinfo表示）
-        return;
-      }
-      // クリップボードAPI（https対応ブラウザ）
-      await navigator.clipboard.writeText(outputText);
-      raise("出力内容をコピーしました。", "success");
-    } catch {
-      // フォールバック（古いブラウザ等）
-      const area = document.getElementById(
-        "outputText"
-      ) as HTMLTextAreaElement | null;
-      if (area) {
-        area.select();
-        document.execCommand("copy");
-        raise("出力内容をコピーしました。", "success");
-      } else {
-        raise("コピーに失敗しました。ブラウザの設定をご確認ください。");
-      }
-    }
-  };
 
   return (
     <div className="replace">
@@ -102,7 +67,7 @@ const Replace = () => {
 
       <Title titleName="データ置換ツール" title="title" />
 
-      {/* 入力欄（TextBox 使用） */}
+      {/* 入力欄 */}
       <div className="textField">
         <SubTitle title="subTitle" titleName="入力欄" />
         <TextBox
@@ -110,8 +75,8 @@ const Replace = () => {
           rows={7}
           placeholder="ここにテキストを貼り付け"
           textStyle="textBox"
-          value={inputText} // ← 制御
-          onChange={(e) => setInputText(e.target.value)} // ← 制御
+          value={inputText}
+          onChange={(e) => setInputText(e.target.value)}
         />
       </div>
 
@@ -122,40 +87,40 @@ const Replace = () => {
           title="検索パターン"
           inputId="searchPattern"
           placeholder="例) hello / ^a.b$ ..."
-          value={searchPattern} // ← 制御
-          onChange={(e) => setSearchPattern(e.target.value)} // ← 制御
+          value={searchPattern}
+          onChange={(e) => setSearchPattern(e.target.value)}
           checkId="regexMode"
-          checkLabel="正規表現モード（ONで \n や \t を解釈）"
-          checked={regexMode} // ← 制御
-          onCheck={(e) => setRegexMode(e.target.checked)} // ← 制御
+          checkLabel={"正規表現モード（ONで \\n や \\t を解釈）"} // ★ 表示用にエスケープ
+          checked={regexMode}
+          onCheck={(e) => setRegexMode(e.target.checked)}
         />
 
         <ReplaceOption
           title="置換文字列"
           inputId="replaceValue"
-          placeholder="例) ￥t や ￥n（正規表現モード時のみ有効）"
-          value={replaceValue} // ← 制御
-          onChange={(e) => setReplaceValue(e.target.value)} // ← 制御
+          placeholder={"例) \\t や \\n（正規表現モード時のみ有効）"} // ★ 表示用にエスケープ
+          value={replaceValue}
+          onChange={(e) => setReplaceValue(e.target.value)}
           checkId="matchCase"
           checkLabel="大文字小文字を区別する"
-          checked={caseSensitive} // ← 制御
-          onCheck={(e) => setCaseSensitive(e.target.checked)} // ← 制御
+          checked={caseSensitive}
+          onCheck={(e) => setCaseSensitive(e.target.checked)}
         />
       </div>
 
-      {/* 出力欄（TextBox 使用・編集不可） */}
+      {/* 出力欄 */}
       <div className="textField">
         <div className="outputHeader">
           <SubTitle title="subTitle" titleName="出力欄" />
-          <button
+          <CopyButton
             className="copyBtn"
-            onClick={handleCopy}
-            disabled={!outputText} // 出力が空なら無効
-            title="出力内容をコピー"
-            aria-label="出力内容をコピー"
-          >
-            コピー
-          </button>
+            getText={() => outputText}
+            disabled={!outputText}
+            onSuccess={() => raise("出力内容をコピーしました。", "success")}
+            onError={() =>
+              raise("コピーに失敗しました。ブラウザの設定をご確認ください。")
+            }
+          />
         </div>
 
         <TextBox
@@ -163,10 +128,12 @@ const Replace = () => {
           rows={7}
           placeholder="置換後のテキストが出力されます。"
           textStyle="textBox"
-          value={outputText} // ← 制御
-          readOnly // ← 編集不可
+          value={outputText}
+          readOnly
         />
       </div>
+
+      <BackButton className="backBtn" fallback="/tools" label="戻る" />
     </div>
   );
 };
