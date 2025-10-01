@@ -18,4 +18,3 @@ const Card = ({ title, to }: CardProps) => {
   );
 };
 
-export { Title, Card };

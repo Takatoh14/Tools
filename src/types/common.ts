@@ -7,3 +7,4 @@ export type CardProps = {
   title: string;
   to: string;
 };
+

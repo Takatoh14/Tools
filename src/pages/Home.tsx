@@ -8,7 +8,7 @@ const Home = () => {
     { title: 'JSON整形', to: '/tools/json-format' },
     { title: 'JSON作成', to: '/tools/json-create' },
     { title: 'JSON変換', to: '/tools/json-convert' },
-    { title: 'データ差分比較', to: 'tools/diff-tool' },
+    { title: 'データ差分比較', to: '/tools/diff-tool' },
   ];
   return (
     <div className="top">
