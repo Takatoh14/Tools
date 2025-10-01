@@ -39,6 +39,8 @@
 
 /* ===== Textarea ===== */
 /* 横余白は .replace が持つので margin-inline は 0 に */
+/* src/styles/common.scss の .text-area を修正 */
+
 .text-area {
   max-width: 100%;
   width: 100%;
@@ -49,6 +51,17 @@
   border-radius: 2rem;
   resize: none;
 
+  /* デフォルト：折り返し（横スクロールなし）*/
+  white-space: pre-wrap;
+  overflow-x: hidden;
+
+  /* ✅ 同一要素に .nowrap が付いたときに横スクロールに変更 */
+  &.nowrap {
+    white-space: pre;
+    overflow-x: auto;
+  }
+
+  /* スクロールバー装飾はそのまま */
   &::-webkit-scrollbar {
     width: 1.5rem;
   }

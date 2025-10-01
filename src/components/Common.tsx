@@ -33,6 +33,7 @@ const TextArea = ({
   readonly,
   value,
   onChange,
+  className, // ★ 追加
 }: TextAreaProps) => (
   <textarea
     id={id}
@@ -40,9 +41,9 @@ const TextArea = ({
     rows={rows}
     placeholder={placeholder}
     readOnly={readonly}
-    className="text-area"
     value={value}
     onChange={e => onChange?.(e.target.value)}
+    className={`text-area ${className ?? ''}`} // ★ ここで反映
   />
 );
 

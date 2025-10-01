@@ -19,6 +19,7 @@ export type TextAreaProps = {
   readonly?: boolean;
   value?: string; // ★ 入力値を受け取る
   onChange?: (v: string) => void; // ★ 値が変わったら呼ぶ
+  className?: string;
 };
 
 // 置換前/後の入力
