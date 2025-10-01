@@ -1,4 +1,4 @@
-import '../styles/Home.scss';
+import '../styles/home.scss';
 
 import { Card, Title } from '../components/Common';
 

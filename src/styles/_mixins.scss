@@ -1,26 +1,16 @@
+/* すでにあれば流用でOK */
 @use './variables' as *;
 
-/* レスポンシブ Mixin */
-@mixin sm {
-  @media (min-width: $bp-sm) {
-    @content;
-  }
-}
+/* md: ～800px 以下 */
 @mixin md {
-  @media (min-width: $bp-md) {
-    @content;
-  }
-}
-@mixin lg {
-  @media (min-width: $bp-lg) {
+  @media (max-width: $bp-md) {
     @content;
   }
 }
 
-/* カード風の共通スタイル */
-@mixin card {
-  background: rgba(255, 255, 255, 0.04);
-  border: $border;
-  border-radius: $radius;
-  padding: $space-3;
+/* sm: ～480px 以下（任意で追加） */
+@mixin sm {
+  @media (max-width: $bp-sm) {
+    @content;
+  }
 }
