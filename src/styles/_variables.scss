@@ -8,11 +8,10 @@ $color-muted: #9aa3b2;
 $color-accent: #6ea8fe;
 
 /* ブレークポイント */
-$bp-md: 800px;
-$bp-sm: 480px;
+$bp-sm: 640px;
+$bp-md: 960px;
+$bp-lg: 1200px;
 
-/* 枠線 */
-$border: 0.3rem solid rgba(255, 255, 255, 0.08);
-
-/* アニメーション */
-$transition-base: 0.3s ease;
+/* 枠線・角丸 */
+$radius: 12px;
+$border: 1px solid rgba(255, 255, 255, 0.08);
