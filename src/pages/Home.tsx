@@ -12,7 +12,7 @@ const Home = () => {
   ];
   return (
     <div className="top">
-      <Title titleText="トップページ" titleClass="title" />
+      <Title titleText="ツール一覧" titleClass="title" />
       <div className="cards">
         {cards.map(c => (
           <Card key={c.to} title={c.title} to={c.to} />
