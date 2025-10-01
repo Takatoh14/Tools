@@ -1,0 +1,14 @@
+version: '3.9'
+services:
+  frontend:
+    build: .
+    container_name: tools
+    image: tools:latest # ← イメージ名を tools に指定
+    ports:
+      - '5173:5173'
+    volumes:
+      - .:/app
+      - /app/node_modules
+    command: ['npm', 'run', 'dev', '--', '--host', '0.0.0.0', '--port', '5173']
+    stdin_open: true
+    tty: true

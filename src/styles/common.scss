@@ -1,0 +1,188 @@
+@use './reset' as *;
+@use './variables' as *;
+@use './mixins' as *;
+
+/* ===== Typography ===== */
+.title {
+  text-align: center;
+  margin-block: clamp(2rem, 4vw, 4rem);
+  font-size: clamp(2.4rem, 3.2vw + 1rem, 4rem);
+}
+.sub-title {
+  text-align: center;
+  margin-block: clamp(1.6rem, 3.5vw, 4rem);
+  font-size: clamp(1.8rem, 2.4vw + 1rem, 2.5rem);
+}
+
+/* ===== Card ===== */
+.card {
+  max-width: 30rem;
+  width: 100%;
+  height: 20rem;
+  border: $border;
+  border-radius: 3rem;
+  transition: $transition-base;
+  &:hover {
+    transform: translateY(-10px);
+  }
+  .card-title {
+    font-size: clamp(1.6rem, 1.5vw + 1rem, 2rem);
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  @include md {
+    height: 16rem;
+  }
+}
+
+/* ===== Textarea ===== */
+/* 横余白は .replace が持つので margin-inline は 0 に */
+.text-area {
+  max-width: 100%;
+  width: 100%;
+  padding: 1.5rem;
+  margin-inline: 0;
+  font-size: 1.5rem;
+  border: $border;
+  border-radius: 2rem;
+  resize: none;
+
+  &::-webkit-scrollbar {
+    width: 1.5rem;
+  }
+  &::-webkit-scrollbar-track {
+    background: $color-bg;
+    border-radius: 2rem;
+  }
+  &::-webkit-scrollbar-thumb {
+    background: #00ffcc;
+    border-radius: 2rem;
+    border: 0.5rem solid $color-bg;
+  }
+
+  @include md {
+    font-size: 1.4rem;
+    &::-webkit-scrollbar {
+      width: 1.2rem;
+    }
+  }
+  @include sm {
+    padding: 1.2rem;
+    font-size: 1.3rem;
+    &::-webkit-scrollbar {
+      width: 1rem;
+    }
+  }
+}
+
+/* ===== Replace Inputs ===== */
+/* 共通ラッパ：横余白は 0、幅 100%（.replace が面を持つ） */
+%replace-container {
+  max-width: 100%;
+  width: 100%;
+  margin-inline: 0;
+}
+
+.replace-text {
+  @extend %replace-container;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2rem;
+
+  .replace-label {
+    font-size: 1.5rem;
+    text-align: left;
+    .replace-input {
+      width: 100%;
+      padding: 0.8rem 1rem;
+      border: $border;
+      border-radius: 1rem;
+    }
+  }
+  @include md {
+    grid-template-columns: 1fr;
+  }
+}
+
+.replace-checkbox {
+  @extend %replace-container;
+  margin-top: 3rem;
+  margin-bottom: 6rem;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2rem;
+
+  .replace-checkbox-label {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    font-size: 1.5rem;
+    .replace-checkbox-input {
+      inline-size: 1.6rem;
+      block-size: 1.6rem;
+    }
+  }
+  @include md {
+    grid-template-columns: 1fr;
+  }
+  @include sm {
+    .replace-checkbox-label {
+      font-size: 1.4rem;
+      .replace-checkbox-input {
+        inline-size: 1.8rem;
+        block-size: 1.8rem;
+      } /* タップしやすく */
+    }
+  }
+}
+
+/* ===== Buttons ===== */
+%button-base {
+  display: flex;
+  .btn {
+    border: $border;
+    border-radius: 1rem;
+    padding: 1rem 2rem;
+    font-size: 1.4rem;
+    background-color: transparent;
+    transition: 0.3s ease;
+    &:hover {
+      background: rgba(0, 255, 204, 0.1);
+    }
+    &:focus-visible {
+      outline: 2px solid #00ffcc;
+      outline-offset: 2px;
+    }
+    &:active {
+      transform: translateY(1px);
+    }
+  }
+  @include sm {
+    .btn {
+      width: 100%;
+    }
+  }
+}
+
+/* ボタン行も .replace と面を合わせる（幅100%・横余白0） */
+.button-copy,
+.button-back {
+  @extend %replace-container;
+  @extend %button-base;
+}
+
+/* 配置だけ個別指定 */
+.button-copy {
+  justify-content: flex-end;
+  margin-block: 0 0.5rem;
+  @include sm {
+    justify-content: center;
+    margin-block: 0.5rem;
+  }
+}
+.button-back {
+  justify-content: center;
+  margin-block: 3rem 1.2rem;
+}
