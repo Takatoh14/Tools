@@ -3,7 +3,7 @@
 @use './mixins' as *;
 
 /* ============================
-   Typography
+  Typography
    ============================ */
 .title {
   text-align: center;
@@ -18,13 +18,13 @@
 }
 
 /* ============================
-   Card
+  Card
    ============================ */
 .card {
   max-width: 30rem;
   width: 100%;
   height: 20rem;
-  border: $border;
+  border: solid 0.3rem #00ffcc;
   border-radius: 3rem;
   transition: 0.3s ease;
 
@@ -46,10 +46,10 @@
 }
 
 /* ============================
-   Textarea
-   - 横余白は親コンテナが持つ前提
-   - 既定は折り返し（pre-wrap）
-   - .nowrap で横スクロール（pre）
+  Textarea
+  - 横余白は親コンテナが持つ前提
+  - 既定は折り返し（pre-wrap）
+  - .nowrap で横スクロール（pre）
    ============================ */
 .text-area {
   max-width: 100%;
@@ -103,8 +103,8 @@
 }
 
 /* ============================
-   Replace Inputs 共通レイアウト
-   - 親が横幅を管理するので margin-inline:0
+  Replace Inputs 共通レイアウト
+  - 親が横幅を管理するので margin-inline:0
    ============================ */
 %full-row {
   max-width: 100%;
@@ -146,8 +146,8 @@
 }
 
 /* ============================
-   Checkbox Options（2列→1列）
-   - アクセシブルなカスタムチェックボックス
+  Checkbox Options（2列→1列）
+  - アクセシブルなカスタムチェックボックス
    ============================ */
 .replace-checkbox {
   @extend %full-row;
@@ -213,7 +213,7 @@
 }
 
 /* ============================
-   Buttons
+  Buttons
    ============================ */
 %button-row {
   @extend %full-row;
