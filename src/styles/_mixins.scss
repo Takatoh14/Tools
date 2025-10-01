@@ -2,17 +2,17 @@
 
 /* レスポンシブ Mixin */
 @mixin sm {
-  @media (min-width: $bp-sm) {
+  @media (max-width: $bp-sm) {
     @content;
   }
 }
 @mixin md {
-  @media (min-width: $bp-md) {
+  @media (max-width: $bp-md) {
     @content;
   }
 }
 @mixin lg {
-  @media (min-width: $bp-lg) {
+  @media (max-width: $bp-lg) {
     @content;
   }
 }

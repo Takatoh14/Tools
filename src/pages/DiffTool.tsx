@@ -18,7 +18,7 @@ const BREAKPOINT_MD = 800; // variables.scss の $bp-md に合わせる
 const DiffTool = () => {
   const [left, setLeft] = useState('');
   const [right, setRight] = useState('');
-  const [nowrap, setNowrap] = useState(false);
+  const [nowrap, setNowrap] = useState(false); // 入力欄のみ適用
 
   // レイアウト（左右→上下）の切り替え
   const [isStacked, setIsStacked] = useState(false);
@@ -29,10 +29,7 @@ const DiffTool = () => {
     return () => window.removeEventListener('resize', onResize);
   }, []);
 
-  // 完全一致判定（オプションなしで素の比較）
-  const isEqual = useMemo(() => left === right, [left, right]);
-
-  // 差分 → 後処理で「削除+追加」を「置換」に畳み込む
+  // 差分（del+ins→rep に畳み込み済み）
   const rawLines: DiffLine[] = useMemo(
     () => diffText(left, right),
     [left, right]
@@ -41,6 +38,9 @@ const DiffTool = () => {
     () => coalesceReplace(rawLines),
     [rawLines]
   );
+
+  // 完全一致？
+  const isEqual = useMemo(() => left === right, [left, right]);
 
   const leftLabel = isStacked ? '上' : '左';
   const rightLabel = isStacked ? '下' : '右';
@@ -61,10 +61,10 @@ const DiffTool = () => {
             placeholder="テキストを入力してください。"
             value={left}
             onChange={setLeft}
-            readonly={false}
-            className={nowrap ? 'nowrap' : undefined} // 入力だけに適用（横スクロール）
+            className={nowrap ? 'nowrap' : undefined}
           />
         </div>
+
         <div className="panel">
           <div className="panel-title">{rightLabel}</div>
           <TextArea
@@ -74,14 +74,12 @@ const DiffTool = () => {
             placeholder="テキストを入力してください。"
             value={right}
             onChange={setRight}
-            readonly={false}
             className={nowrap ? 'nowrap' : undefined}
           />
         </div>
       </div>
 
-      {/* オプションは「折り返しなし」だけ残す */}
-      <div className="replace-checkbox">
+      <div className="diff-options">
         <TextReplaceOptions
           id="opt-nowrap"
           name="opt-nowrap"
@@ -103,7 +101,7 @@ const DiffTool = () => {
         </div>
       ) : (
         <div className="diff-results">
-          {/* 結果は常に横スクロール（wrap しない） */}
+          {/* 結果パネルは常に横スクロール可能（入力の nowrap 設定は無関係） */}
           <div className="result">
             <div className="result-title">{leftResultLabel}</div>
             {lines.map((ln, idx) => (
@@ -156,13 +154,11 @@ function cls(t: 'equal' | 'insert' | 'delete' | 'replace') {
   }
 }
 
-// 改行や空文字を見やすく
 function renderText(s: string) {
   if (s === '') return <span className="ghost">·</span>;
   return s.split('').map((c, i) => <span key={i}>{c}</span>);
 }
 
-/** del の直後の ins を「置換（rep）」へ */
 function coalesceReplace(lines: DiffLine[]): DiffLine[] {
   return lines.map(ln => {
     const L = ln.left;
