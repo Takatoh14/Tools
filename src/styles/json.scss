@@ -1,0 +1,84 @@
+/* src/styles/json.scss */
+@use './variables' as *;
+@use './mixins' as *;
+
+.json {
+  max-width: 86.3rem;
+  margin: clamp(3rem, 5vw, 6rem) auto;
+  padding-inline: clamp(1.2rem, 4vw, 4rem);
+
+  .json-section {
+    margin-bottom: 2.5rem;
+
+    .section-title {
+      font-size: 1.6rem;
+      margin-bottom: 0.6rem;
+      text-align: center;
+    }
+  }
+
+  /* オプション行レイアウト */
+  .json-options {
+    display: grid;
+    grid-template-columns: 1fr 1fr; /* 区切り/括り + ヘッダ */
+    gap: 2rem;
+    margin-bottom: 2.5rem;
+
+    @include md {
+      grid-template-columns: 1fr;
+    }
+
+    .opt {
+      display: flex;
+      flex-direction: column;
+      gap: 0.6rem;
+
+      .opt-label {
+        font-size: 1.5rem;
+        opacity: 0.9;
+      }
+
+      select,
+      .inline-input {
+        padding: 0.6rem 0.8rem;
+        border-radius: 0.6rem;
+        border: $border;
+        background: transparent;
+        color: #00ffcc;
+      }
+
+      .inline-input {
+        margin-top: 0.4rem;
+        max-width: 16rem; /* カスタム入力幅 */
+      }
+    }
+
+    /* 見た目をオプション群に合わせたトグル */
+    .opt-toggle {
+      display: flex;
+
+      .replace-checkbox-label {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.6rem;
+        font-size: 1.5rem;
+        padding: 0.6rem 0.8rem;
+        line-height: 1;
+      }
+
+      .replace-checkbox-input {
+        inline-size: 1.6rem;
+        block-size: 1.6rem;
+      }
+    }
+  }
+
+  .json-output {
+    .output-header {
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      margin-bottom: 1rem;
+    }
+  }
+}
