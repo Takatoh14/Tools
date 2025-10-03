@@ -15,8 +15,8 @@ const Routers = () => {
         <Route path="/tools/data-replace" element={<DataReplace />} />
         <Route path="/tools/json-convert" element={<JsonConvert />} />
         <Route path="/tools/json-create" element={<JsonCreate />} />
-        <Route path="tools/json-format" element={<JsonFormat />} />
-        <Route path="tools/diff-tool" element={<DiffTool />} />
+        <Route path="/tools/json-format" element={<JsonFormat />} />
+        <Route path="/tools/diff-tool" element={<DiffTool />} />
       </Routes>
     </Router>
   );

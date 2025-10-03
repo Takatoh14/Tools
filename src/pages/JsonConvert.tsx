@@ -1,4 +1,6 @@
-// src/pages/JsonConvert.tsx
+// src/pages/JsonCreate.tsx
+// JSON→CSV 変換ページ（機能本体 + SEO設定：React 19 の Document Metadata 使用）
+
 import '../styles/json.scss';
 
 import {
@@ -9,39 +11,32 @@ import {
 } from '../components/Common';
 import { useEffect, useMemo, useState } from 'react';
 import { goBack } from '../utils/goBack';
-import { csvToJson, type QuoteMode } from '../lib/csvToJson';
+import { jsonToCsv, type QuoteMode } from '../lib/jsonToCsv';
 
 type DelimiterPreset = 'comma' | 'tab' | 'pipe' | 'custom';
 type QuotePreset = 'double' | 'single' | 'none' | 'custom';
-type IndentPreset = '2' | '4' | 'tab';
 
-const JsonConvert = () => {
-  // 入力（CSV/TSV）
+const JsonCreate = () => {
+  // ===== 入力 JSON =====
   const [input, setInput] = useState('');
 
-  // 区切り
-  const [delimPreset, setDelimPreset] = useState<DelimiterPreset>('comma');
-  const [customDelim, setCustomDelim] = useState(',');
+  // ===== 区切り文字 =====
+  const [preset, setPreset] = useState<DelimiterPreset>('comma');
+  const [customDelim, setCustomDelim] = useState(','); // カスタム区切り
 
-  // 括り
-  const [quotePreset, setQuotePreset] = useState<QuotePreset>('double');
-  const [customQuote, setCustomQuote] = useState('"');
+  // ===== 括り文字 =====
+  const [quotePreset, setQuotePreset] = useState<QuotePreset>('none');
+  const [customQuote, setCustomQuote] = useState('"'); // カスタム括り
 
-  // ヘッダ & 空行
-  const [hasHeader, setHasHeader] = useState(true);
-  const [skipEmptyLines, setSkipEmptyLines] = useState(true);
+  // ===== ヘッダ出力 =====
+  const [header, setHeader] = useState(true);
 
-  // 整形（出力 JSON）
-  const [indentPreset, setIndentPreset] = useState<IndentPreset>('2');
-  const [minify, setMinify] = useState(false);
-  const [sortKeys, setSortKeys] = useState(false);
-
-  // 出力
+  // ===== 出力（CSV/TSV） =====
   const [output, setOutput] = useState('');
 
-  // 実際に使う区切り
+  // --- 実際に使う区切りを決定 ---
   const delimiter = useMemo(() => {
-    switch (delimPreset) {
+    switch (preset) {
       case 'comma':
         return ',';
       case 'tab':
@@ -51,9 +46,9 @@ const JsonConvert = () => {
       case 'custom':
         return customDelim || ',';
     }
-  }, [delimPreset, customDelim]);
+  }, [preset, customDelim]);
 
-  // 実際に使う括り
+  // --- UI値 -> ライブラリの QuoteMode へ変換 ---
   const quoteMode: QuoteMode = useMemo(() => {
     switch (quotePreset) {
       case 'double':
@@ -65,44 +60,33 @@ const JsonConvert = () => {
     }
   }, [quotePreset, customQuote]);
 
-  // 出力のインデント
-  const space = useMemo(() => {
-    if (minify) return 0;
-    if (indentPreset === 'tab') return '\t';
-    return indentPreset === '4' ? 4 : 2;
-  }, [indentPreset, minify]);
-
-  // 変換
+  // --- 入力 or 設定が変わったら即時変換 ---
   useEffect(() => {
     if (!input.trim()) {
       setOutput('');
       return;
     }
     try {
-      const rows = csvToJson(input, {
+      const parsed = JSON.parse(input) as unknown;
+      if (!Array.isArray(parsed)) {
+        setOutput(
+          '⚠ 入力はオブジェクト配列（例: [{...},{...}]）にしてください。'
+        );
+        return;
+      }
+      const result = jsonToCsv(parsed, {
         delimiter,
-        quote: quoteMode,
-        hasHeader,
-        skipEmptyLines,
+        header,
+        quote: quoteMode, // none/ダブル/シングル/カスタムを反映
       });
-
-      // キーのソート（任意）
-      const normalized = sortKeys
-        ? rows.map(obj => {
-            const ent = Object.entries(obj).sort(([a], [b]) =>
-              a.localeCompare(b)
-            );
-            return Object.fromEntries(ent);
-          })
-        : rows;
-
-      setOutput(JSON.stringify(normalized, null, space));
+      setOutput(result);
     } catch (err) {
       const msg = err instanceof Error ? err.message : String(err);
-      setOutput(`⚠ 変換に失敗しました: ${msg}`);
+      setOutput(`⚠ JSONの形式が不正です: ${msg}`);
     }
-  }, [input, delimiter, quoteMode, hasHeader, skipEmptyLines, space, sortKeys]);
+  }, [input, delimiter, header, quoteMode]);
 
+  // --- クリップボードへコピー ---
   async function handleCopy() {
     try {
       await navigator.clipboard.writeText(output);
@@ -112,18 +96,63 @@ const JsonConvert = () => {
     }
   }
 
+  // --- 構造化データ（JSON-LD）：このページを SoftwareApplication として宣言 ---
+  const jsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'SoftwareApplication',
+    name: 'JSON→CSV 変換ツール',
+    operatingSystem: 'Web',
+    applicationCategory: 'DeveloperApplication',
+    offers: {
+      '@type': 'Offer',
+      price: '0',
+      priceCurrency: 'JPY',
+    },
+  };
+
   return (
     <div className="json">
+      {/* ▼ SEO設定（React 19：ここに書くと <head> に自動集約） ▼ */}
+      <title>
+        JSON→CSV変換ツール｜JSONからCSV/TSVを作成（無料・オンライン）
+      </title>
+      <meta
+        name="description"
+        content="JSON配列（[{...},{...}]）からCSV/TSVを作成する無料オンラインツール。区切り文字・括り文字・ヘッダ出力に対応し、ブラウザだけで簡単にエクスポートできます。"
+      />
+      <meta
+        name="keywords"
+        content="JSON CSV 変換, JSON から CSV, TSV, 区切り文字, 括り文字, 無料, オンライン, データ変換"
+      />
+      <meta property="og:title" content="JSON→CSV変換ツール" />
+      <meta
+        property="og:description"
+        content="JSONからCSV/TSVを作成。区切り/括り/ヘッダ出力に対応する無料オンラインツール。"
+      />
+      <meta property="og:type" content="website" />
+      {/* 公開URLが決まったら canonical を有効化 */}
+      {
+        <link
+          rel="canonical"
+          href="https://takato-work.com/tools/json-convert"
+        />
+      }
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
+      {/* ▲ SEO設定ここまで ▲ */}
+
       <Title titleText="JSON変換" titleClass="title" />
 
-      {/* 入力 */}
+      {/* 入力（JSON） */}
       <div className="json-section">
-        <div className="section-title">入力</div>
+        <div className="section-title">入力（JSON）</div>
         <TextArea
-          id="csv-input"
-          name="csv-input"
+          id="json-input"
+          name="json-input"
           rows={12}
-          placeholder="データを貼り付けてください"
+          placeholder="JSONを入力してください"
           value={input}
           onChange={setInput}
           readonly={false}
@@ -132,21 +161,20 @@ const JsonConvert = () => {
 
       <Title titleText="変換設定" titleClass="sub-title" />
 
-      {/* オプション */}
       <div className="json-options">
-        {/* 区切り */}
+        {/* 区切り文字 */}
         <label className="opt">
           <span className="opt-label">区切り文字</span>
           <select
-            value={delimPreset}
-            onChange={e => setDelimPreset(e.target.value as DelimiterPreset)}
+            value={preset}
+            onChange={e => setPreset(e.target.value as DelimiterPreset)}
           >
             <option value="comma">カンマ</option>
             <option value="tab">タブ</option>
             <option value="pipe">パイプ（|）</option>
             <option value="custom">カスタム</option>
           </select>
-          {delimPreset === 'custom' && (
+          {preset === 'custom' && (
             <input
               className="inline-input"
               value={customDelim}
@@ -157,16 +185,16 @@ const JsonConvert = () => {
           )}
         </label>
 
-        {/* 括り */}
+        {/* 括り文字 */}
         <label className="opt">
           <span className="opt-label">括り文字</span>
           <select
             value={quotePreset}
             onChange={e => setQuotePreset(e.target.value as QuotePreset)}
           >
+            <option value="none">なし</option>
             <option value="double">ダブルクォート（"）</option>
             <option value="single">シングルクォート（'）</option>
-            <option value="none">なし</option>
             <option value="custom">カスタム</option>
           </select>
           {quotePreset === 'custom' && (
@@ -180,62 +208,20 @@ const JsonConvert = () => {
           )}
         </label>
 
-        {/* トグル群 */}
+        {/* ヘッダ出力 */}
         <div className="opt opt-toggle">
           <TextReplaceOptions
             id="opt-header"
             name="opt-header"
-            spanTitle="先頭行をヘッダとして扱う"
+            spanTitle="ヘッダ行を出力する"
             textType="checkbox"
-            checked={hasHeader}
-            onChange={setHasHeader}
-          />
-          <TextReplaceOptions
-            id="opt-skip-empty"
-            name="opt-skip-empty"
-            spanTitle="空行をスキップする"
-            textType="checkbox"
-            checked={skipEmptyLines}
-            onChange={setSkipEmptyLines}
-          />
-        </div>
-
-        {/* 整形（インデント/最小化/キーソート） */}
-        <label className="opt">
-          <span className="opt-label">インデント</span>
-          <select
-            value={indentPreset}
-            onChange={e => setIndentPreset(e.target.value as IndentPreset)}
-            disabled={minify}
-            title={minify ? '最小化が有効のため無効' : ''}
-          >
-            <option value="2">スペース 2</option>
-            <option value="4">スペース 4</option>
-            <option value="tab">タブ</option>
-          </select>
-        </label>
-
-        <div className="opt opt-toggle">
-          <TextReplaceOptions
-            id="opt-minify"
-            name="opt-minify"
-            spanTitle="最小化（詰めて出力）"
-            textType="checkbox"
-            checked={minify}
-            onChange={setMinify}
-          />
-          <TextReplaceOptions
-            id="opt-sort"
-            name="opt-sort"
-            spanTitle="キーをアルファベット順にソート"
-            textType="checkbox"
-            checked={sortKeys}
-            onChange={setSortKeys}
+            checked={header}
+            onChange={setHeader}
           />
         </div>
       </div>
 
-      {/* 出力 */}
+      {/* 出力（CSV/TSV） */}
       <Title titleText="出力" titleClass="sub-title" />
       <div className="json-output">
         <div className="output-header">
@@ -248,8 +234,8 @@ const JsonConvert = () => {
         <TextArea
           id="json-output"
           name="json-output"
-          rows={12}
-          placeholder="ここに JSON の出力が表示されます"
+          rows={10}
+          placeholder="ここに出力結果が表示されます"
           value={output}
           readonly={true}
         />
@@ -264,4 +250,4 @@ const JsonConvert = () => {
   );
 };
 
-export default JsonConvert;
+export default JsonCreate;
