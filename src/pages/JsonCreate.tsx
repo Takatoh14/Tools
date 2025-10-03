@@ -23,7 +23,6 @@ const JsonCreate = () => {
   const [customQuote, setCustomQuote] = useState('"'); // カスタム括り
 
   const [header, setHeader] = useState(true);
-  const [alwaysQuote, setAlwaysQuote] = useState(false); // ★ 追加: 常に括る
   const [output, setOutput] = useState(''); // 出力
 
   // 実際に使う区切り文字
@@ -40,7 +39,7 @@ const JsonCreate = () => {
     }
   }, [preset, customDelim]);
 
-  // 実際に使う括り文字（lib の QuoteMode 型に変換）
+  // UI値 -> ライブラリの QuoteMode へ
   const quoteMode: QuoteMode = useMemo(() => {
     switch (quotePreset) {
       case 'double':
@@ -69,15 +68,14 @@ const JsonCreate = () => {
       const result = jsonToCsv(parsed, {
         delimiter,
         header,
-        quote: quoteMode,
-        alwaysQuote, // ★ 追加
+        quote: quoteMode, // セレクトの指定を常時適用（none は例外扱い）
       });
       setOutput(result);
     } catch (err) {
       const msg = err instanceof Error ? err.message : String(err);
       setOutput(`⚠ JSONの形式が不正です: ${msg}`);
     }
-  }, [input, delimiter, header, quoteMode, alwaysQuote]);
+  }, [input, delimiter, header, quoteMode]);
 
   // クリップボードコピー
   async function handleCopy() {
@@ -139,9 +137,9 @@ const JsonCreate = () => {
             value={quotePreset}
             onChange={e => setQuotePreset(e.target.value as QuotePreset)}
           >
+            <option value="none">なし</option>
             <option value="double">ダブルクォート（"）</option>
             <option value="single">シングルクォート（'）</option>
-            <option value="none">なし</option>
             <option value="custom">カスタム</option>
           </select>
           {quotePreset === 'custom' && (
@@ -155,7 +153,7 @@ const JsonCreate = () => {
           )}
         </label>
 
-        {/* トグル群 */}
+        {/* ヘッダ */}
         <div className="opt opt-toggle">
           <TextReplaceOptions
             id="opt-header"
@@ -164,14 +162,6 @@ const JsonCreate = () => {
             textType="checkbox"
             checked={header}
             onChange={setHeader}
-          />
-          <TextReplaceOptions
-            id="opt-always-quote"
-            name="opt-always-quote"
-            spanTitle="常に括り文字で囲む"
-            textType="checkbox"
-            checked={alwaysQuote}
-            onChange={setAlwaysQuote}
           />
         </div>
       </div>
