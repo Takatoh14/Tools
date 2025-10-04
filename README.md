@@ -1,73 +1,58 @@
-# React + TypeScript + Vite
+# Takato's Portfolio & Tools
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+![Top Screenshot](https://takato-work.com/images/ogp.png)
 
-Currently, two official plugins are available:
+フルスタックエンジニア **Takato Tanabe** のポートフォリオ兼ツール集です。  
+React / TypeScript / Vite を用いて開発し、データ変換や JSON 整形などの便利な機能を公開しています。
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+👉 公開サイト: [https://takato-work.com/tools/](https://takato-work.com/tools/)
 
-## React Compiler
+---
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+## 🚀 Features
 
-## Expanding the ESLint configuration
+- **トップページ**
+  - 自己紹介、スキル一覧、SNS リンク、ポートフォリオリンクを掲載
+- **Portfolio**
+  - 制作した Web アプリやツールをカード形式で紹介
+- **Tools**
+  - JSON 整形
+  - JSON → CSV 変換
+  - CSV → JSON 変換
+  - データ差分比較
+  - （今後追加予定）
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+---
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+## 🛠️ Tech Stack
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+- **Frontend**
+  - React 18
+  - TypeScript
+  - Vite
+  - SCSS (Modules)
+  - React Router DOM
+- **Infrastructure**
+  - Docker (開発環境)
+  - FileZilla (本番アップロード)
+- **Version Control**
+  - Git / GitHub (Issues, PR, Project Board)
+- **Design**
+  - Adobe XD, Photoshop, Illustrator
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+---
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+## 📦 Project Setup
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+開発用:
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```bash
+# 依存関係のインストール
+npm install
+
+# 開発サーバー起動
+npm run dev
+
+# 本番ビルド
+npm run build
 ```
