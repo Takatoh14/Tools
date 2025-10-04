@@ -1,0 +1,99 @@
+@use './_variables' as *;
+@use './_mixins' as *;
+
+.replace {
+  max-width: 86.3rem;
+  width: 100%;
+  margin: clamp(4rem, 6vw, 8rem) auto;
+  padding-inline: clamp(1.2rem, 4vw, 4rem);
+}
+
+/* ラベル＋インプット */
+.replace-text {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2rem;
+  margin-inline: 0;
+
+  .replace-label {
+    font-size: 1.5rem;
+    text-align: left;
+
+    .replace-input {
+      width: 100%;
+      padding: 0.8rem 1rem;
+      border: $border;
+      border-radius: 1rem;
+    }
+  }
+
+  @include md {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* チェックボックスの行 */
+.replace-checkbox {
+  margin-top: 3rem;
+  margin-bottom: 6rem;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2rem;
+
+  .replace-checkbox-label {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.8rem;
+    font-size: 1.5rem;
+    line-height: 1;
+
+    .replace-checkbox-input {
+      inline-size: 1.8rem;
+      block-size: 1.8rem;
+      border-radius: 0.6rem;
+      appearance: auto; // OSネイティブをベースに
+    }
+  }
+
+  @include md {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* テキストエリア（共通の .text-area スタイルを前提に微調整） */
+.text-area {
+  width: 100%;
+  max-width: 100%;
+  margin-inline: 0;
+}
+
+/* ボタン行 */
+.button-copy,
+.button-back {
+  display: flex;
+
+  .btn {
+    border: $border;
+    border-radius: 1rem;
+    padding: 1rem 2rem;
+    font-size: 1.4rem;
+    background: transparent;
+    transition: 0.2s ease;
+
+    &:hover {
+      background: rgba(0, 255, 204, 0.08);
+    }
+  }
+}
+.button-copy {
+  justify-content: flex-end;
+  margin: 0 0 0.5rem 0;
+
+  @include sm {
+    justify-content: center;
+  }
+}
+.button-back {
+  justify-content: center;
+  margin: 0.5rem 0 1.2rem;
+}

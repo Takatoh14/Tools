@@ -1,0 +1,28 @@
+@use './variables' as *;
+
+.select-container {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.select-label {
+  font-size: 1.4rem;
+  opacity: 0.9;
+}
+
+.select {
+  width: 18rem;
+  padding: 0.8rem 1rem;
+  border: $border;
+  border-radius: 1rem;
+  background: transparent;
+  color: inherit;
+  font-size: 1.4rem;
+  cursor: pointer;
+
+  &:focus-visible {
+    outline: 2px solid #00ffcc;
+    outline-offset: 2px;
+  }
+}

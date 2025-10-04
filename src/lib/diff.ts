@@ -13,61 +13,61 @@ export type DiffLine = {
 
 const splitLinesKeep = (s: string) => s.split(/\r\n|\r|\n/);
 
+/**
+ * テキスト全体の差分（行→文字の二段階）
+ * 空白統一などの正規化は行わず、常にオリジナルの文字列で比較します。
+ */
 export function diffText(leftRaw: string, rightRaw: string): DiffLine[] {
-  // 表示・比較ともオリジナル文字列を使う（空白統一なし）
-  const leftLines = splitLinesKeep(leftRaw);
-  const rightLines = splitLinesKeep(rightRaw);
+  const left = splitLinesKeep(leftRaw);
+  const right = splitLinesKeep(rightRaw);
 
-  // 行の LCS マッピング
-  const map = lcsMap(leftLines, rightLines);
+  const map = lcsMap(left, right);
 
   const result: DiffLine[] = [];
   let i = 0,
     j = 0;
 
-  while (i < leftLines.length || j < rightLines.length) {
-    if (i < leftLines.length && j < rightLines.length && map[i][j] === 'eq') {
-      // 同じ行：中の文字差分だけ取る
-      const pieces = diffChars(leftLines[i], rightLines[j]);
+  while (i < left.length || j < right.length) {
+    if (i < left.length && j < right.length && map[i][j] === 'eq') {
+      // 行が一致：行内の文字差分を出す
+      const pieces = diffChars(left[i], right[j]);
       result.push({ left: pieces.left, right: pieces.right });
       i++;
       j++;
     } else if (
-      j < rightLines.length &&
-      (i >= leftLines.length || map[i]?.[j] === 'ins')
+      j < right.length &&
+      (i >= left.length || map[i]?.[j] === 'ins')
     ) {
-      // 右に挿入
+      // 右に挿入された行
       result.push({
         left: [{ type: 'insert', text: '' }],
-        right: [{ type: 'insert', text: rightLines[j] }],
+        right: [{ type: 'insert', text: right[j] }],
       });
       j++;
     } else if (
-      i < leftLines.length &&
-      (j >= rightLines.length || map[i]?.[j] === 'del')
+      i < left.length &&
+      (j >= right.length || map[i]?.[j] === 'del')
     ) {
-      // 左から削除
+      // 左から削除された行
       result.push({
-        left: [{ type: 'delete', text: leftLines[i] }],
+        left: [{ type: 'delete', text: left[i] }],
         right: [{ type: 'delete', text: '' }],
       });
       i++;
     } else {
-      // フォールバック（置換として扱う）
-      result.push({
-        left: [{ type: 'replace', text: leftLines[i] ?? '' }],
-        right: [{ type: 'replace', text: rightLines[j] ?? '' }],
-      });
+      // 行位置は同じだが内容が異なる → 文字レベル差分
+      const pieces = diffChars(left[i] ?? '', right[j] ?? '');
+      result.push({ left: pieces.left, right: pieces.right });
       i++;
       j++;
     }
   }
+
   return result;
 }
 
-/* ----------------- helpers ------------------ */
+/* ---------------- helpers ---------------- */
 
-// 行 LCS の“進行指示”テーブル：eq / del / ins
 function lcsMap(a: string[], b: string[]) {
   const n = a.length,
     m = b.length;
@@ -80,6 +80,7 @@ function lcsMap(a: string[], b: string[]) {
           : Math.max(dp[i + 1][j], dp[i][j + 1]);
     }
   }
+
   const map: ('eq' | 'del' | 'ins')[][] = Array.from({ length: n }, () =>
     Array(m).fill('eq')
   );
@@ -101,7 +102,7 @@ function lcsMap(a: string[], b: string[]) {
   return map;
 }
 
-// 文字 LCS → ピース化（equal / insert / delete / replace）
+// 文字レベル LCS
 function diffChars(
   a: string,
   b: string
@@ -110,6 +111,7 @@ function diffChars(
     br = [...b];
   const n = ar.length,
     m = br.length;
+
   const dp = Array.from({ length: n + 1 }, () => Array(m + 1).fill(0));
   for (let i = n - 1; i >= 0; i--) {
     for (let j = m - 1; j >= 0; j--) {
@@ -119,6 +121,7 @@ function diffChars(
           : Math.max(dp[i + 1][j], dp[i][j + 1]);
     }
   }
+
   const left: LinePiece[] = [];
   const right: LinePiece[] = [];
 
@@ -126,40 +129,37 @@ function diffChars(
     j = 0;
   while (i < n || j < m) {
     if (i < n && j < m && ar[i] === br[j]) {
-      pushPiece(left, 'equal', ar[i]);
-      pushPiece(right, 'equal', br[j]);
+      push(left, 'equal', ar[i]);
+      push(right, 'equal', br[j]);
       i++;
       j++;
     } else if (j < m && (i >= n || dp[i][j + 1] >= dp[i + 1][j])) {
-      // 右に挿入
-      pushPiece(right, 'insert', br[j]);
-      pushPiece(left, 'insert', ''); // 位置合わせ用の空文字
+      push(right, 'insert', br[j]);
+      push(left, 'insert', ''); // 位置合わせの空
       j++;
     } else if (i < n) {
-      // 左から削除
-      pushPiece(left, 'delete', ar[i]);
-      pushPiece(right, 'delete', '');
+      push(left, 'delete', ar[i]);
+      push(right, 'delete', '');
       i++;
     }
   }
 
-  // delete + insert を replace として見やすく整形
+  // 並んだ del/ins を rep に寄せる（視認性向上）
   mergeReplace(left, right);
   return { left, right };
 }
 
-function pushPiece(arr: LinePiece[], type: LinePiece['type'], ch: string) {
+function push(arr: LinePiece[], type: LinePiece['type'], ch: string) {
   const last = arr[arr.length - 1];
   if (last && last.type === type) last.text += ch;
   else arr.push({ type, text: ch });
 }
 
-// 片側 delete / 他側 insert の並びを replace に寄せる
 function mergeReplace(left: LinePiece[], right: LinePiece[]) {
-  for (let k = 0; k < left.length; k++) {
-    if (left[k].type === 'delete' && right[k]?.type === 'insert') {
-      left[k].type = 'replace';
-      right[k].type = 'replace';
+  for (let i = 0; i < left.length; i++) {
+    if (left[i].type === 'delete' && right[i]?.type === 'insert') {
+      left[i].type = 'replace';
+      right[i].type = 'replace';
     }
   }
 }

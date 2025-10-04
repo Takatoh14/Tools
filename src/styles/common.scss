@@ -2,28 +2,266 @@
 @use './variables' as *;
 @use './mixins' as *;
 
+/* ============================
+  Typography
+   ============================ */
 .title {
   text-align: center;
-  margin-block: 4rem;
-  font-size: 4rem;
+  margin-block: clamp(2rem, 4vw, 4rem);
+  font-size: clamp(2.4rem, 3.2vw + 1rem, 4rem);
 }
 
+.sub-title {
+  text-align: center;
+  margin-block: clamp(1.6rem, 3.5vw, 4rem);
+  font-size: clamp(1.8rem, 2.4vw + 1rem, 2.5rem);
+}
+
+/* ============================
+  Card
+   ============================ */
 .card {
   max-width: 30rem;
   width: 100%;
-  border: $border;
   height: 20rem;
+  border: solid 0.3rem #00ffcc;
   border-radius: 3rem;
-  transition: 0.5s ease;
+  transition: 0.3s ease;
 
   &:hover {
     transform: translateY(-10px);
   }
+
   .card-title {
-    font-size: 2rem;
+    font-size: clamp(1.6rem, 1.5vw + 1rem, 2rem);
     height: 100%;
     display: flex;
     justify-content: center;
     align-items: center;
   }
 
+  @include md {
+    height: 16rem;
+  }
+}
+
+/* ============================
+  Textarea
+  - 横余白は親コンテナが持つ前提
+  - 既定は折り返し（pre-wrap）
+  - .nowrap で横スクロール（pre）
+   ============================ */
+.text-area {
+  max-width: 100%;
+  width: 100%;
+  padding: 1.5rem;
+  margin-inline: 0;
+  font-size: 1.5rem;
+  border: $border;
+  border-radius: 2rem;
+  resize: none;
+  background: transparent;
+  color: $color-fg;
+
+  /* 既定：折り返し */
+  white-space: pre-wrap;
+
+  /* スクロールバー */
+  &::-webkit-scrollbar {
+    width: 1.5rem;
+  }
+  &::-webkit-scrollbar-track {
+    background: $color-bg;
+    border-radius: 2rem;
+  }
+  &::-webkit-scrollbar-thumb {
+    background: #00ffcc;
+    border-radius: 2rem;
+    border: 0.5rem solid $color-bg;
+  }
+
+  /* 横スクロール版（DiffTool などから className="nowrap" を付ける） */
+  &.nowrap {
+    white-space: pre;
+    overflow-x: auto;
+  }
+
+  @include md {
+    font-size: 1.4rem;
+    &::-webkit-scrollbar {
+      width: 1.2rem;
+    }
+  }
+
+  @include sm {
+    padding: 1.2rem;
+    font-size: 1.3rem;
+    &::-webkit-scrollbar {
+      width: 1rem;
+    }
+  }
+}
+
+/* ============================
+  Replace Inputs 共通レイアウト
+  - 親が横幅を管理するので margin-inline:0
+   ============================ */
+%full-row {
+  max-width: 100%;
+  width: 100%;
+  margin-inline: 0;
+}
+
+/* 文字入力2列（置換前/置換後） */
+.replace-text {
+  @extend %full-row;
+
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2rem;
+
+  .replace-label {
+    font-size: 1.5rem;
+    text-align: left;
+
+    .replace-span {
+      display: inline-block;
+      margin-bottom: 0.6rem;
+      opacity: 0.9;
+    }
+
+    .replace-input {
+      width: 100%;
+      padding: 0.8rem 1rem;
+      border: $border;
+      border-radius: 1rem;
+      background: transparent;
+      color: $color-fg;
+    }
+  }
+
+  @include md {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ============================
+  Checkbox Options（2列→1列）
+  - アクセシブルなカスタムチェックボックス
+   ============================ */
+.replace-checkbox {
+  @extend %full-row;
+
+  margin-top: 3rem;
+  margin-bottom: 6rem;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2rem;
+
+  .replace-checkbox-label {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.8rem;
+    font-size: 1.5rem;
+    cursor: pointer;
+    user-select: none;
+
+    /* ネイティブ input をそのまま使いつつ見た目だけカスタム */
+    .replace-checkbox-input {
+      inline-size: 1.8rem;
+      block-size: 1.8rem;
+      border: $border;
+      border-radius: 0.5rem;
+      display: inline-grid;
+      place-content: center;
+      background: transparent;
+      transition: 0.2s ease;
+
+      /* チェック時の背景/ボーダー */
+      &:checked {
+        background: rgba($color-accent, 0.35);
+        box-shadow: 0 0 0 2px rgba($color-accent, 0.25) inset;
+      }
+
+      /* キーボードフォーカス */
+      &:focus-visible {
+        outline: 2px solid $color-accent;
+        outline-offset: 2px;
+      }
+
+      /* アクティブ */
+      &:active {
+        transform: translateY(1px);
+      }
+    }
+  }
+
+  @include md {
+    grid-template-columns: 1fr;
+  }
+
+  @include sm {
+    .replace-checkbox-label {
+      font-size: 1.4rem;
+
+      .replace-checkbox-input {
+        inline-size: 2rem;
+        block-size: 2rem; /* タップしやすく */
+      }
+    }
+  }
+}
+
+/* ============================
+  Buttons
+   ============================ */
+%button-row {
+  @extend %full-row;
+  display: flex;
+
+  .btn {
+    border: $border;
+    border-radius: 1rem;
+    padding: 1rem 2rem;
+    font-size: 1.4rem;
+    background-color: transparent;
+    color: $color-fg;
+    transition: 0.3s ease;
+
+    &:hover {
+      background: rgba(0, 255, 204, 0.1);
+    }
+    &:focus-visible {
+      outline: 2px solid #00ffcc;
+      outline-offset: 2px;
+    }
+    &:active {
+      transform: translateY(1px);
+    }
+  }
+
+  @include sm {
+    .btn {
+      width: 100%;
+    }
+  }
+}
+
+/* コピー行：右寄せ（SPは中央） */
+.button-copy {
+  @extend %button-row;
+  justify-content: flex-end;
+  margin-block: 0 0.5rem;
+
+  @include sm {
+    justify-content: center;
+    margin-block: 0.5rem;
+  }
+}
+
+/* 戻る行：中央揃え */
+.button-back {
+  @extend %button-row;
+  justify-content: center;
+  margin-block: 3rem 1.2rem;
+}
