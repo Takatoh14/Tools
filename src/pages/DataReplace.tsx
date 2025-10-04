@@ -141,7 +141,7 @@ const DataReplace = () => {
           id="regular-expression"
           name="regular-expression"
           // \n,\t,\r をソース上で表記するときはエスケープが必要（UIでは \n などと見える）
-          spanTitle="正規表現モード（置換 \\n, \\t, \\r 展開）"
+          spanTitle="正規表現モード"
           textType="checkbox"
           checked={useRegex}
           onChange={setUseRegex}
