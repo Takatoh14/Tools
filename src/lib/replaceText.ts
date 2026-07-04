@@ -28,7 +28,7 @@ const unescapeReplacement = (s: string) =>
 /**
  * 入力テキストに対して、全文または選択範囲のみ置換を行う純粋関数。
  *
- * - useRegex = true  : search を正規表現として扱う。置換文字の \n \t \r を展開。
+ * - useRegex = true  : search を正規表現として扱う（m フラグ付与で ^ $ が各行末に一致）。置換文字の \n \t \r を展開。
  * - useRegex = false : search は文字列として扱う（自動エスケープ）。置換文字はそのまま。
  * - caseSensitive    : false の場合は i フラグを付ける。
  * - selection        : 指定時、その範囲のみ置換。未指定は全文。
@@ -56,7 +56,7 @@ export function replaceText(
   const tail = input.slice(end);
 
   try {
-    const flags = caseSensitive ? 'g' : 'gi';
+    const flags = (caseSensitive ? 'g' : 'gi') + (useRegex ? 'm' : '');
     const pattern = useRegex ? search : escapeRegExp(search);
     const re = new RegExp(pattern, flags);
 
